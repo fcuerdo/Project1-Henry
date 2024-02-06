@@ -1,0 +1,12 @@
+fastapi
+pandas
+scikit-learn
+uvicorn
+seaborn
+matplotlib
+numpy
+json
+ast
+gzip
+re
+nltk
