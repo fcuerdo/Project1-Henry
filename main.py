@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
+import pyarrow
 
 
 
@@ -10,9 +11,9 @@ app = FastAPI()
 
 
 # Datasets uploading
-df_ga = pd.read_csv("./datasets/steam_games_cleaned.csv")
-df_re = pd.read_csv("./datasets/steam_reviews_cleaned.csv")
-df_it = pd.read_csv("./datasets/steam_items_cleaned.csv")
+df_ga = pd.read_parquet("./datasets/steam_games_cleaned.parquet")
+df_re = pd.read_parquet("./datasets/steam_reviews_cleaned.parquet")
+df_it = pd.read_parquet("./datasets/steam_items_cleaned.parquet")
 
 @app.get('/developer/{desarrollador}')
 async def calculate_developer_stats(developer_name):
@@ -183,7 +184,7 @@ X = df_ga[features].fillna(0)
 cosine_sim = cosine_similarity(X)
 
 @app.get("/recommendations/{game_id}")
-async def get_recommendations(game_id: int, num_recommendations: int = 5):
+async def get_recommendations(game_id: str, num_recommendations: int = 5):
     
     # Check if the game_id exists in the DataFrame
     idx_list = df_ga.index[df_ga['id'] == game_id].tolist()
@@ -207,3 +208,4 @@ async def get_recommendations(game_id: int, num_recommendations: int = 5):
     
     # Convert the DataFrame to a dictionary for JSON response
     return recommended_games.to_dict(orient='records')
+    
