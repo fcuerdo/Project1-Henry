@@ -11,9 +11,9 @@ app = FastAPI()
 
 
 # Datasets uploading
-#df_ga = pd.read_parquet("./datasets/steam_games_cleaned.parquet")
-#df_re = pd.read_parquet("./datasets/steam_reviews_cleaned.parquet")
-#df_it = pd.read_parquet("./datasets/steam_items_cleaned.parquet")
+df_ga = pd.read_parquet("./datasets/steam_games_cleaned.parquet")
+df_re = pd.read_parquet("./datasets/steam_reviews_cleaned.parquet")
+df_it = pd.read_parquet("./datasets/steam_items_cleaned.parquet")
 
 @app.get('/developer/{desarrollador}')
 async def calculate_developer_stats(developer_name):
