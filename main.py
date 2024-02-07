@@ -3,7 +3,8 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 import pyarrow
-
+import pyarrow.parquet as pq
+from collections import defaultdict
 
 
 
@@ -12,69 +13,89 @@ app = FastAPI()
 
 # Datasets uploading
 df_ga = pd.read_parquet("./datasets/steam_games_cleaned.parquet")
+df_ga_endpoint1 = pd.read_parquet("./datasets/steam_games_endpoint1_cleaned.parquet")
 df_re = pd.read_parquet("./datasets/steam_reviews_cleaned.parquet")
 df_it = pd.read_parquet("./datasets/steam_items_cleaned.parquet")
 
 @app.get('/developer/{desarrollador}')
 async def calculate_developer_stats(developer_name):
-    # Filtrar el DataFrame por el desarrollador específico
-    developer_games = df_ga[df_ga['developer'] == developer_name]
-
-    # Agrupar por año
-    yearly_data = developer_games.groupby('release_date').agg(
-        cantidad_items=('id', 'count'),
-        contenido_free=('price', lambda x: (x == 0.00).sum())
-    ).reset_index()
-
-    # Calcular el porcentaje de contenido gratuito
-    yearly_data['porcentaje_contenido_free'] = (
-        yearly_data['contenido_free'] / yearly_data['cantidad_items']
+    games_file_path = "./datasets/steam_games_endpoint1_cleaned.parquet"
+    yearly_data_list = []
+    
+    parquet_file = pq.ParquetFile(games_file_path)
+    
+    for batch in parquet_file.iter_batches(batch_size=10000):
+        df_chunk = batch.to_pandas()
+        dev_games_chunk = df_chunk[df_chunk['developer'] == developer_name]
+        
+        yearly_stats = dev_games_chunk.groupby('release_date').agg(
+            cantidad_items=('id', 'count'),
+            contenido_free=('price', lambda x: (x == 0.00).sum())
+        )
+        
+        yearly_stats['porcentaje_contenido_free'] = (
+            yearly_stats['contenido_free'] / yearly_stats['cantidad_items']
+        ) * 100
+        
+        yearly_data_list.append(yearly_stats)
+    
+    yearly_data_final = pd.concat(yearly_data_list)
+    yearly_data_final = yearly_data_final.groupby('release_date').sum()
+    yearly_data_final['porcentaje_contenido_free'] = (
+        yearly_data_final['contenido_free'] / yearly_data_final['cantidad_items']
     ) * 100
-
-    # Renombrar las columnas para coincidir con la salida deseada
-    yearly_data = yearly_data.rename(columns={
-        'release_date': 'Año',
+    
+    yearly_data_final.rename(columns={
         'cantidad_items': 'Cantidad de Items',
         'porcentaje_contenido_free': 'Contenido Free'
-    })
-
-    # Formatear la columna de porcentaje a un string con 2 decimales seguido de un signo de porcentaje
-    yearly_data['Contenido Free'] = yearly_data['Contenido Free'].apply(lambda x: f"{x:.2f}%")
-
-    # Ordenar los resultados por año
-    yearly_data = yearly_data.sort_values('Año', ascending=False)
-
-    # Convertir el DataFrame en una lista de diccionarios para el retorno
-    result = yearly_data[['Año', 'Cantidad de Items', 'Contenido Free']].to_dict(orient='records')
+    }, inplace=True)
     
-    return result
+    yearly_data_final['Contenido Free'] = yearly_data_final['Contenido Free'].map("{:.2f}%".format)
+    yearly_data_final.sort_values('release_date', ascending=False, inplace=True)
+    
+    return yearly_data_final.reset_index().to_dict(orient='records')
+
+
 
 @app.get("/userdata/{user_id}")
-async def userdata(user_id: str):
-    # Filtrar items por user_id
-    user_items = df_it[df_it['user_id'] == user_id]
-    
-    # Unir df_it con df_ga para obtener los precios de los juegos que el usuario posee
-    user_games_prices = user_items.merge(df_ga, left_on='item_id', right_on='id')
-    
-    # Calcular el total gastado
-    total_spent = user_games_prices['price'].sum()
-    
-    # Unir df_it con df_re para obtener las recomendaciones de los juegos que el usuario posee
-    user_games_reviews = user_items.merge(df_re, left_on='item_id', right_on='item_id')
-    
-    # Calcular el porcentaje de recomendación como la cantidad de True sobre el total
-    total_reviews = len(user_games_reviews)
-    if total_reviews > 0:
-        recommend_count = user_games_reviews['recommend'].sum()
-        recommend_percentage = (recommend_count / total_reviews) * 100
-    else:
-        recommend_percentage = 0  # Si no hay reviews, el porcentaje es 0
-    
-    # Contar la cantidad de items
-    number_of_items = len(user_items)
-    
-    # Preparar y devolver el resultado
+async def user_data(user_id):
+       
+    # Initialize an empty DataFrame for the final result
+    total_spent = 0
+    recommend_count = 0
+    total_reviews = 0
+    number_of_items = 0
+
+    # Open the Parquet files
+    games_parquet = pq.ParquetFile("./datasets/steam_games_endpoint2_cleaned.parquet")
+    reviews_parquet = pq.ParquetFile("./datasets/steam_rewiews_endpoint2_cleaned.parquet")
+    items_parquet = pq.ParquetFile("./datasets/steam_items_endpoint2_cleaned.parquet")
+
+    # Process the items file in batches
+    for batch in items_parquet.iter_batches(batch_size=500000):
+        items_chunk = batch.to_pandas()
+        user_items_chunk = items_chunk[items_chunk['user_id'] == user_id]
+        
+        # Increment the number of items
+        number_of_items += len(user_items_chunk)
+        
+        # Process the games file in batches
+        for game_batch in games_parquet.iter_batches(batch_size=10000):
+            games_chunk = game_batch.to_pandas()
+            user_games_chunk = user_items_chunk.merge(games_chunk, left_on='item_id', right_on='id', how='left')
+            total_spent += user_games_chunk['price'].sum()
+
+        # Process the reviews file in batches
+        for review_batch in reviews_parquet.iter_batches(batch_size=10000):
+            reviews_chunk = review_batch.to_pandas()
+            user_reviews_chunk = user_items_chunk.merge(reviews_chunk, on='item_id', how='left')
+            recommend_count += user_reviews_chunk['recommend'].sum()
+            total_reviews += len(user_reviews_chunk)
+
+    # Calculate the recommendation percentage
+    recommend_percentage = (recommend_count / total_reviews) * 100 if total_reviews else 0
+
+    # Prepare and return the result
     result = {
         "Usuario X": user_id,
         "Dinero gastado": f"{total_spent:.2f} USD",
@@ -86,8 +107,6 @@ async def userdata(user_id: str):
 
 
 
-
-# Assuming df_ga and df_it are already defined and properly loaded
 
 @app.get("/user_for_genre/{genre}")
 async def user_for_genre(genre: str):
@@ -133,6 +152,13 @@ async def user_for_genre(genre: str):
 
 @app.get("/best_developer_year/{year}")
 async def best_developer_year(year: str):
+    # Convert year to string to ensure proper filtering
+    year = str(year)
+    
+    # Use pandas to read Parquet files
+    df_ga = pd.read_parquet('./datasets/steam_games_endpoint4_cleaned.parquet')
+    df_re = pd.read_parquet('./datasets/steam_rewiews_endpoint4_cleaned.parquet')
+
     # Filter reviews for recommended and positive sentiment
     positive_reviews = df_re[(df_re['recommend'] == True) & (df_re['sentiment_analysis'] == 2)]
     
@@ -156,56 +182,35 @@ async def best_developer_year(year: str):
 
 @app.get("/developer_reviews_analysis/{developer}")
 async def developer_reviews_analysis(developer: str):
-    # Filter games by the developer
-    developer_games = df_ga[df_ga['developer'] == developer]
+
+    # Initialize counters for positive and negative reviews
+    positive_reviews_count = 0
+    negative_reviews_count = 0
+
+    # Load the games dataset and filter by developer
+    games_parquet = pq.ParquetFile('./datasets/steam_games_endpoint5_cleaned.parquet')
+    developer_games_ids = []
+    for batch in games_parquet.iter_batches(batch_size=400000):
+        games_chunk = batch.to_pandas()
+        filtered_chunk = games_chunk[games_chunk['developer'] == developer]
+        developer_games_ids.extend(filtered_chunk['id'].tolist())
     
-    # Merge the developer's games with their reviews
-    developer_reviews = pd.merge(developer_games, df_re, left_on='id', right_on='item_id')
-    
-    # Count positive and negative reviews
-    positive_reviews = len(developer_reviews[developer_reviews['sentiment_analysis'] == 2])
-    negative_reviews = len(developer_reviews[developer_reviews['sentiment_analysis'] == 0])
-    
+    # Now process the reviews in batches, only considering the previously filtered game IDs
+    reviews_parquet = pq.ParquetFile('./datasets/steam_rewiews_endpoint5_cleaned.parquet')
+    for batch in reviews_parquet.iter_batches(batch_size=900000):
+        reviews_chunk = batch.to_pandas()
+        # Filter reviews for games developed by the specified developer
+        developer_reviews_chunk = reviews_chunk[reviews_chunk['item_id'].isin(developer_games_ids)]
+        
+        # Update positive and negative review counts
+        positive_reviews_count += (developer_reviews_chunk['sentiment_analysis'] == 2).sum()
+        negative_reviews_count += (developer_reviews_chunk['sentiment_analysis'] == 0).sum()
+
     # Create and return the result dictionary
-    result = {developer: {'Negative': negative_reviews, 'Positive': positive_reviews}}
+    result = {developer: {'Negative': negative_reviews_count, 'Positive': positive_reviews_count}}
     
     return result
 
 
 
-
-# Selecting genre and spec columns for the feature matrix
-features = [col for col in df_ga.columns if 'genre_' in col or 'spec_' in col]
-
-# Creating the feature matrix with genres and specifications
-X = df_ga[features].fillna(0)
-
-# Calculating the cosine similarity matrix
-cosine_sim = cosine_similarity(X)
-
-@app.get("/recommendations/{game_id}")
-async def get_recommendations(game_id: str, num_recommendations: int = 5):
-    
-    # Check if the game_id exists in the DataFrame
-    idx_list = df_ga.index[df_ga['id'] == game_id].tolist()
-    if not idx_list:
-        # If the game_id is not found, return an HTTP error response
-        raise HTTPException(status_code=404, detail=f"Game ID {game_id} not found in the dataset.")
-    
-    # If the game_id is found, proceed with fetching the recommendations
-    idx = idx_list[0]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-
-    # Excluir el juego de entrada de las recomendaciones
-    sim_scores = [sim_score for sim_score in sim_scores if sim_score[0] != idx]
-
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[:num_recommendations] # Obtener los top N recomendaciones
-    game_indices = [i[0] for i in sim_scores]
-    
-    # Fetching the game details based on the indices
-    recommended_games = df_ga.iloc[game_indices][['id', 'app_name']]
-    
-    # Convert the DataFrame to a dictionary for JSON response
-    return recommended_games.to_dict(orient='records')
     
