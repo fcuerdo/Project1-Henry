@@ -212,5 +212,29 @@ async def developer_reviews_analysis(developer: str):
     return result
 
 
+df_ga_recommend = pd.read_parquet('./datasets/steam_games_recommend_cleaned.parquet')
 
+
+@app.get("/recommendations/{game_id}")
+async def recommend_games_by_all_genres(game_id, num_recommendations: int = 5):  # Explicitly type game_id
+    # Check if the input game exists
+    if game_id not in df_ga_recommend['id'].values:
+        raise HTTPException(status_code=404, detail="The game with the provided ID was not found.")
     
+    # Find the input game's row
+    game_row = df_ga_recommend[df_ga_recommend['id'] == game_id]
+
+    # Extract only genre columns for comparison
+    genre_columns = [col for col in df_ga_recommend.columns if 'genre_' in col]
+    input_game_genres = game_row[genre_columns].iloc[0]
+
+    # Calculate similarity based on matching genres
+    similarity_scores = df_ga_recommend.apply(lambda row: (row[genre_columns] == input_game_genres).sum(), axis=1)
+
+    # Sort games by their similarity score in descending order, excluding the input game
+    similar_games = df_ga_recommend.loc[similarity_scores.nlargest(num_recommendations + 1).index]
+
+    # Exclude the input game from the recommendations
+    recommendations = similar_games[similar_games['id'] != game_id].head(num_recommendations)
+
+    return recommendations['app_name'].tolist()
