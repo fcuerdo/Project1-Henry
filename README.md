@@ -3,7 +3,7 @@
 ## Descripción
 
 Este proyecto se centra en el análisis de datos relacionados con juegos en la plataforma Steam, así como en la implementación de una API para proporcionar información y funcionalidades específicas basadas en esos datos.
-<<<<<<< HEAD
+
 
 ## Objetivo
 
@@ -42,11 +42,11 @@ El proyecto está estructurado en los siguientes componentes principales:
 
 Este proyecto está desplegado en [Render](https://render.com/). Puedes acceder a la API en la siguiente URL: [Render](https://fastapi-app-pupd.onrender.com)
 =======
->>>>>>> c1410b3e35445d17293d0c8ea4110e1868f9a584
+
 
 ## Objetivo
 
-<<<<<<< HEAD
+
 
 ## Guía de Uso
 
@@ -124,4 +124,4 @@ Las contribuciones son bienvenidas. Si deseas contribuir al proyecto, por favor 
 - **Facundo Cuerdo**
 - GitHub: [fcuerdo](https://github.com/fcuerdo)
 - LinkedIn: [fcuerdo](https://www.linkedin.com/in/fcuerdo/)
->>>>>>> c1410b3e35445d17293d0c8ea4110e1868f9a584
+
