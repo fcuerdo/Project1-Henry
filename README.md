@@ -12,7 +12,7 @@ En un mundo digital en constante evolución, "Steam Data Analysis y API" surge c
 
 Elegimos Steam por su rica base de datos y su comunidad diversa, lo que permite extraer insights valiosos para mejorar la experiencia de jugadores y desarrolladores. Los jugadores se benefician al descubrir juegos que se alinean con sus gustos, mientras que los desarrolladores obtienen información clave para crear juegos más atractivos.
 
-##Problemas que Resuelve
+## Problemas que Resuelve
 
 Este proyecto aborda el desafío del descubrimiento de juegos en una biblioteca vasta, ayudando a los usuarios a encontrar juegos que coincidan con sus preferencias y proporcionando a los desarrolladores datos esenciales para optimizar sus creaciones.
 
