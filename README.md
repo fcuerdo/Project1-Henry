@@ -4,9 +4,8 @@
 
 # Proyecto Steam Data Analysis y API
 
-## Descripción Detallada
 
-En un mundo digital en constante evolución, "Steam Data Analysis y API" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
+### En un mundo digital en constante evolución, "Steam Data Analysis y API" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
 
 ## ¿Por Qué Steam?
 
@@ -20,13 +19,46 @@ Este proyecto aborda el desafío del descubrimiento de juegos en una biblioteca 
 
 El objetivo principal de este proyecto es proporcionar a los usuarios una manera conveniente de interactuar con datos relacionados con juegos en la plataforma Steam, ofreciendo funcionalidades como análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores.
 
-## Funcionalidades Principales
+## Endpoints de la API
 
-- **Análisis de Reseñas de Usuarios:** El proyecto incluye funciones para analizar las reseñas de los usuarios, incluyendo el análisis de sentimientos utilizando el analizador VADER.
-  
-- **Recomendaciones de Juegos:** Se ha implementado un modelo de recomendación basado en similitud de género para recomendar juegos similares a uno dado.
+### GET /developer/{developer_name}
 
-- **Estadísticas de Desarrolladores:** La API proporciona estadísticas detalladas sobre los desarrolladores de juegos, incluyendo el porcentaje de contenido gratuito y el número de juegos lanzados por año.
+**Descripción:** Obtiene estadísticas para un desarrollador específico.
+**Parámetro:** developer_name (nombre del desarrollador).
+**Respuesta:** Devuelve un conjunto de estadísticas del desarrollador, incluyendo la cantidad de juegos, contenido gratuito y el porcentaje de contenido gratuito por año. Si el desarrollador no se encuentra, devuelve un error 404.
+
+### GET /userdata/{user_id}
+
+**Descripción:** Recupera datos del usuario, incluyendo el gasto total, el porcentaje de recomendaciones y el número de ítems.
+**Parámetro:** user_id (identificador del usuario).
+**Respuesta:** Información detallada del usuario. Si el user_id no se encuentra, devuelve un error 404.
+
+### GET /user_for_genre/{genre}
+
+**Descripción:** Encuentra al usuario con más horas jugadas para un género específico.
+**Parámetro:** genre (género del juego).
+**Respuesta:** Devuelve el usuario con más horas jugadas en ese género, las horas totales jugadas y las horas jugadas por año. Si el género no se encuentra, devuelve un mensaje de error.
+
+### GET /best_developer_year/{year}
+
+**Descripción:** Identifica los mejores desarrolladores en un año específico.
+**Parámetro:** year (año de interés).
+**Respuesta:** Lista de los mejores desarrolladores y sus recomendaciones positivas en ese año. Si no hay datos para ese año, devuelve un mensaje de error.
+
+### GET /developer_reviews_analysis/{developer}
+
+**Descripción:** Realiza un análisis de las reseñas para un desarrollador específico.
+**Parámetro:** developer (nombre del desarrollador).
+**Respuesta:** Conteo de reseñas positivas y negativas para el desarrollador. Si el desarrollador no se encuentra, devuelve un mensaje de error.
+
+### GET /recommendations/{game_id}
+
+**Descripción:** Proporciona recomendaciones de juegos basadas en la similitud de géneros.
+**Parámetro:** game_id (identificador del juego) y opcionalmente num_recommendations (número de recomendaciones a devolver).
+**Respuesta:** Lista de juegos recomendados. Si el juego no se encuentra, devuelve un error 404.
+
+
+Estos endpoints proporcionan una interfaz rica y versátil para interactuar con los datos de Steam, facilitando el acceso a información valiosa para los desarrolladores y los usuarios de la plataforma.
 
 ## Módulos y Bibliotecas Utilizadas
 
