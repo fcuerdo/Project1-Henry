@@ -4,11 +4,11 @@
 
 # Proyecto Steam Data Analysis y API
 
-##Descripción Detallada
+## Descripción Detallada
 
 En un mundo digital en constante evolución, "Steam Data Analysis y API" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
 
-##¿Por Qué Steam?
+## ¿Por Qué Steam?
 
 Elegimos Steam por su rica base de datos y su comunidad diversa, lo que permite extraer insights valiosos para mejorar la experiencia de jugadores y desarrolladores. Los jugadores se benefician al descubrir juegos que se alinean con sus gustos, mientras que los desarrolladores obtienen información clave para crear juegos más atractivos.
 
