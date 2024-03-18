@@ -23,38 +23,38 @@ El objetivo principal de este proyecto es proporcionar a los usuarios una manera
 
 ### GET /developer/{developer_name}
 
-**Descripción:** Obtiene estadísticas para un desarrollador específico.
-**Parámetro:** developer_name (nombre del desarrollador).
+**Descripción:** Obtiene estadísticas para un desarrollador específico.<br>
+**Parámetro:** developer_name (nombre del desarrollador).<br>
 **Respuesta:** Devuelve un conjunto de estadísticas del desarrollador, incluyendo la cantidad de juegos, contenido gratuito y el porcentaje de contenido gratuito por año. Si el desarrollador no se encuentra, devuelve un error 404.
 
 ### GET /userdata/{user_id}
 
-**Descripción:** Recupera datos del usuario, incluyendo el gasto total, el porcentaje de recomendaciones y el número de ítems.
-**Parámetro:** user_id (identificador del usuario).
+**Descripción:** Recupera datos del usuario, incluyendo el gasto total, el porcentaje de recomendaciones y el número de ítems.<br>
+**Parámetro:** user_id (identificador del usuario).<br>
 **Respuesta:** Información detallada del usuario. Si el user_id no se encuentra, devuelve un error 404.
 
 ### GET /user_for_genre/{genre}
 
-**Descripción:** Encuentra al usuario con más horas jugadas para un género específico.
-**Parámetro:** genre (género del juego).
+**Descripción:** Encuentra al usuario con más horas jugadas para un género específico.<br>
+**Parámetro:** genre (género del juego).<br>
 **Respuesta:** Devuelve el usuario con más horas jugadas en ese género, las horas totales jugadas y las horas jugadas por año. Si el género no se encuentra, devuelve un mensaje de error.
 
 ### GET /best_developer_year/{year}
 
-**Descripción:** Identifica los mejores desarrolladores en un año específico.
-**Parámetro:** year (año de interés).
+**Descripción:** Identifica los mejores desarrolladores en un año específico.<br>
+**Parámetro:** year (año de interés).<br>
 **Respuesta:** Lista de los mejores desarrolladores y sus recomendaciones positivas en ese año. Si no hay datos para ese año, devuelve un mensaje de error.
 
 ### GET /developer_reviews_analysis/{developer}
 
-**Descripción:** Realiza un análisis de las reseñas para un desarrollador específico.
-**Parámetro:** developer (nombre del desarrollador).
+**Descripción:** Realiza un análisis de las reseñas para un desarrollador específico.<br>
+**Parámetro:** developer (nombre del desarrollador).<br>
 **Respuesta:** Conteo de reseñas positivas y negativas para el desarrollador. Si el desarrollador no se encuentra, devuelve un mensaje de error.
 
 ### GET /recommendations/{game_id}
 
-**Descripción:** Proporciona recomendaciones de juegos basadas en la similitud de géneros.
-**Parámetro:** game_id (identificador del juego) y opcionalmente num_recommendations (número de recomendaciones a devolver).
+**Descripción:** Proporciona recomendaciones de juegos basadas en la similitud de géneros.<br>
+**Parámetro:** game_id (identificador del juego) y opcionalmente num_recommendations (número de recomendaciones a devolver).<br>
 **Respuesta:** Lista de juegos recomendados. Si el juego no se encuentra, devuelve un error 404.
 
 
