@@ -2,7 +2,7 @@
 ![wp9013291-status-logo-wallpapers](https://github.com/fcuerdo/Project1-Henry/assets/33520476/9d66c3fb-2544-4002-a2c5-1bbeec270cea)
 
 
-# Proyecto Steam Data Analysis y API
+# Steam Insight Engine
 
 
 ### En un mundo digital en constante evolución, "Steam Data Analysis y API" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
