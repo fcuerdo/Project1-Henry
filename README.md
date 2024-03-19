@@ -5,7 +5,7 @@
 # Steam Insight Engine
 
 
-### En un mundo digital en constante evolución, "Steam Data Analysis y API" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
+### En un mundo digital en constante evolución, "Steam Insight Engine" surge como una iniciativa clave para desentrañar y mejorar la interacción de los usuarios en Steam, una plataforma líder en la distribución de videojuegos. Este proyecto se centra en analizar y proporcionar una comprensión accesible de los datos de Steam, ofreciendo análisis de reseñas, recomendaciones de juegos y estadísticas de desarrolladores para enriquecer la experiencia de los usuarios.
 
 ## ¿Por Qué Steam?
 
