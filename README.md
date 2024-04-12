@@ -1,4 +1,4 @@
-![wp9013291-status-logo-wallpapers](https://github.com/fcuerdo/Project1-Henry/assets/33520476/9d66c3fb-2544-4002-a2c5-1bbeec270
+![!\[wp9013291-status-logo-wallpapers\](https://github.com/fcuerdo/Project1-Henry/assets/33520476/9d66c3fb-2544-4002-a2c5-1bbeec270](https://github.com/fcuerdo/Project1-Henry/blob/master/Hardware_SteamLogo_Banner.png)
 
 # Steam Insight Engine
 
