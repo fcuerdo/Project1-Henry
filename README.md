@@ -79,7 +79,7 @@ The project is structured into the following main components:
 
 ## Deployment
 
-This project is deployed on [Render](https://render.com/). You can access the API at the following URL: [fcuerdo/](https://fastapi-app-pupd.onrender.com).
+This project is deployed on [Render](https://render.com/). You can access the API on Render at the following URL: [fcuerdo/](https://steamrecommendation.onrender.com).
 
 ## Usage Guide
 
