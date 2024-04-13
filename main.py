@@ -1,32 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi_swagger_ui import SwaggerUiSettings, get_swagger_ui_blueprint
 
 import pandas as pd
 
 # Initialize FastAPI application
 app = FastAPI()
-
-
-# Settings for Swagger UI
-swagger_ui_settings = SwaggerUiSettings(
-    path="/docs",
-    url="/openapi.json",
-    theme="dark",  # Use the dark theme
-)
-
-# Blueprint for Swagger UI
-swagger_ui_blueprint = get_swagger_ui_blueprint(
-    swagger_ui_settings
-)
-
-# Register the blueprint for Swagger UI in the app
-app.include_router(
-    swagger_ui_blueprint,
-    prefix=swagger_ui_settings.path,
-    tags=["Swagger UI"],
-)
-
 
 
 # Load precalculated datasets for API endpoints
