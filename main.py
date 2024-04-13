@@ -5,10 +5,6 @@ import pandas as pd
 # Initialize FastAPI application
 app = FastAPI()
 
-@app.get("/")
-async def read_root():
-    return {"message": "Welcome to the FastAPI application!"}
-
 # Load precalculated datasets for API endpoints
 # This ensures that data is ready immediately when the API server starts and is used across different API calls
 df_developer_stats = pd.read_parquet('./datasets/developer_stats.parquet')
